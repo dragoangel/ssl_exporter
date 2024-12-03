@@ -65,7 +65,7 @@ var (
 	startTLSqueryResponses = map[string][]queryResponse{
 		"smtp": []queryResponse{
 			queryResponse{
-				expect: "^220",
+				expect: "^220 ",
 			},
 			queryResponse{
 				send: "EHLO prober",
