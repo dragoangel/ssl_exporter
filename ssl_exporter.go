@@ -18,8 +18,8 @@ import (
 	"github.com/prometheus/common/version"
 	"github.com/prometheus/exporter-toolkit/web"
 	webflag "github.com/prometheus/exporter-toolkit/web/kingpinflag"
-	"github.com/ribbybibby/ssl_exporter/v2/config"
-	"github.com/ribbybibby/ssl_exporter/v2/prober"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/prober"
 )
 
 const (

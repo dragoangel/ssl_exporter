@@ -11,7 +11,7 @@ RACE := $(shell test $$(go env GOARCH) != "amd64" || (echo "-race"))
 export APP_HOST              ?= $(shell hostname)
 export APP_BRANCH            ?= $(shell git describe --all --contains --dirty HEAD)
 export APP_USER              := $(shell id -u --name)
-export APP_DOCKER_IMAGE_NAME := ribbybibby/$(DOCKER_IMAGE_NAME)
+export APP_DOCKER_IMAGE_NAME := piotrkochan/$(DOCKER_IMAGE_NAME)
 
 all: clean format vet build test
 

@@ -1,4 +1,4 @@
-module github.com/ribbybibby/ssl_exporter/v2
+module github.com/piotrkochan/ssl_exporter/v2
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0

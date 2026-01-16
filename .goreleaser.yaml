@@ -21,10 +21,36 @@ builds:
       -X github.com/prometheus/common/version.Branch={{.Env.APP_BRANCH}}
       -X github.com/prometheus/common/version.BuildUser={{.Env.APP_USER}}@{{.Env.APP_HOST}}
       -X github.com/prometheus/common/version.BuildDate={{.Date}}
+changelog:
+  use: github
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Documentation
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Tests
+      regexp: '^.*?test(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: Refactoring
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: Maintenance
+      regexp: '^.*?chore(\([[:word:]]+\))??!?:.+$'
+      order: 5
+    - title: Others
+      order: 999
+
 release:
   github:
-    owner: ribbybibby
+    owner: piotrkochan
     name: ssl_exporter
+  prerelease: auto
 dockers:
   - image_templates:
       - "{{.Env.APP_DOCKER_IMAGE_NAME}}:{{.Version}}-amd64"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/bmatcuk/doublestar/v2"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/ribbybibby/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
 )
 
 // ProbeFile collects certificate metrics from local files

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ribbybibby/ssl_exporter/v2/config"
-	"github.com/ribbybibby/ssl_exporter/v2/test"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/test"
 )
 
 // TestProbeHandler tests that the probe handler sets the ssl_probe_success and

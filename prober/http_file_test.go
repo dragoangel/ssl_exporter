@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/ribbybibby/ssl_exporter/v2/config"
-	"github.com/ribbybibby/ssl_exporter/v2/test"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/test"
 )
 
 func TestProbeHTTPFile(t *testing.T) {

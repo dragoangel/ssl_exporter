@@ -11,7 +11,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/version"
-	"github.com/ribbybibby/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
 )
 
 var userAgent = fmt.Sprintf("SSLExporter/%s", version.Version)

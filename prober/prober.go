@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/ribbybibby/ssl_exporter/v2/config"
+	"github.com/piotrkochan/ssl_exporter/v2/config"
 )
 
 var (
