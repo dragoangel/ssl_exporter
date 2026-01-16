@@ -41,3 +41,10 @@ jobs:
           APP_USER: github-actions
           APP_HOST: github.com
           APP_DOCKER_IMAGE_NAME: piotrkochan/ssl-exporter
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: piotrkochan/ssl-exporter
