@@ -22,7 +22,7 @@ builds:
       -X github.com/prometheus/common/version.BuildUser={{.Env.APP_USER}}@{{.Env.APP_HOST}}
       -X github.com/prometheus/common/version.BuildDate={{.Date}}
 changelog:
-  use: github
+  use: git
   sort: asc
   groups:
     - title: Features
