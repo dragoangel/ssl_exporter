@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+ssl_exporter
 
 # Test binary, built with `go test -c`
 *.test
@@ -14,4 +15,7 @@
 # KetBrains IDEs files
 .idea
 
-ssl_exporter
+# Others
+e2e/certs/
+!e2e/certs/.gitkeep
+e2e/config.yml

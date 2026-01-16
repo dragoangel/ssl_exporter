@@ -61,4 +61,9 @@ clean:
 	@rm -Rf $(BIN_DIR)
 	@rm -Rf $(BIN_NAME)
 
-.PHONY: all style test format vet build docker snapshot release clean
+e2e:
+	@echo ">> running e2e tests"
+	@chmod +x e2e/run.sh
+	@e2e/run.sh
+
+.PHONY: all style test format vet build docker snapshot release clean e2e

@@ -1,0 +1,90 @@
+services:
+  mysql:
+    image: mysql:8.0.41
+    environment:
+      MYSQL_ROOT_PASSWORD: test123
+    command: ["--require_secure_transport=ON"]
+    ports:
+      - "13306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ptest123"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mariadb:
+    image: mariadb:11.7
+    environment:
+      MARIADB_ROOT_PASSWORD: test123
+    command: ["--require_secure_transport=ON"]
+    ports:
+      - "13307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:16.6
+    environment:
+      POSTGRES_PASSWORD: test123
+    command: >
+      -c ssl=on
+      -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+      -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    ports:
+      - "15432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  proxysql:
+    image: proxysql/proxysql:3.0.2
+    ports:
+      - "16033:6033"
+    volumes:
+      - ./proxysql.cnf:/etc/proxysql.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "6033", "-u", "test", "-ptest"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  nginx_ssl:
+    image: nginx:1.27
+    ports:
+      - "18443:443"
+    volumes:
+      - ./nginx_ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsk", "https://localhost:443"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  nginx_nossl:
+    image: nginx:1.27
+    ports:
+      - "18080:80"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:80"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  nginx_expired:
+    image: nginx:1.27
+    ports:
+      - "18444:443"
+    volumes:
+      - ./nginx_expired.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsk", "https://localhost:443"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

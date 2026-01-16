@@ -33,6 +33,12 @@ modules:
     prober: tcp
     tcp:
       starttls: smtp
+  tcp_mysql_starttls:
+    prober: tcp
+    tcp:
+      starttls: mysql
+    tls_config:
+      insecure_skip_verify: true
   file:
     prober: file
   file_ca_certificates:
