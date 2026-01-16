@@ -3,15 +3,15 @@ package prober
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/bmatcuk/doublestar/v2"
-	"github.com/go-kit/log"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
 )
 
 // ProbeFile collects certificate metrics from local files
-func ProbeFile(ctx context.Context, logger log.Logger, target string, module config.Module, registry *prometheus.Registry) error {
+func ProbeFile(ctx context.Context, logger *slog.Logger, target string, module config.Module, registry *prometheus.Registry) error {
 	errCh := make(chan error, 1)
 
 	go func() {

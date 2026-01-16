@@ -1,13 +1,13 @@
 package main
 
 import (
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/go-kit/log"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
 	"github.com/ribbybibby/ssl_exporter/v2/test"
 )
@@ -17,7 +17,7 @@ import (
 func TestProbeHandler(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -37,7 +37,7 @@ func TestProbeHandler(t *testing.T) {
 
 	rr, err := probe(server.URL, "https", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// Check probe success
@@ -56,7 +56,7 @@ func TestProbeHandler(t *testing.T) {
 func TestProbeHandlerFail(t *testing.T) {
 	rr, err := probe("localhost:6666", "", config.DefaultConfig)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// Check probe success
@@ -74,7 +74,7 @@ func TestProbeHandlerFail(t *testing.T) {
 func TestProbeHandlerDefaultModule(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -101,7 +101,7 @@ func TestProbeHandlerDefaultModule(t *testing.T) {
 
 	rr, err := probe(server.URL, "", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// Should have used the https prober
@@ -113,7 +113,7 @@ func TestProbeHandlerDefaultModule(t *testing.T) {
 
 	rr, err = probe(server.URL, "", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// It should fail when there's no default module
@@ -127,7 +127,7 @@ func TestProbeHandlerDefaultModule(t *testing.T) {
 func TestProbeHandlerDefaultTarget(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -149,7 +149,7 @@ func TestProbeHandlerDefaultTarget(t *testing.T) {
 	// Should use the target in the module configuration
 	rr, err := probe("", "https", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// Check probe success
@@ -165,7 +165,7 @@ func TestProbeHandlerDefaultTarget(t *testing.T) {
 	// Should ignore a different target in the target parameter
 	rr, err = probe("localhost:6666", "https", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// Check probe success
@@ -187,7 +187,7 @@ func TestProbeHandlerDefaultTarget(t *testing.T) {
 
 	rr, err = probe("", "tcp", conf)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	// It should fail when there's no target in the module configuration or
@@ -217,6 +217,6 @@ func probe(target, module string, conf *config.Config) (*httptest.ResponseRecord
 	return rr, nil
 }
 
-func newTestLogger() log.Logger {
-	return log.NewLogfmtLogger(log.NewSyncWriter(os.Stdout))
+func newTestLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
 }

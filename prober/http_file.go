@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
-	"github.com/go-kit/log"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
 )
 
 // ProbeHTTPFile collects certificate metrics from a remote file via http
-func ProbeHTTPFile(ctx context.Context, logger log.Logger, target string, module config.Module, registry *prometheus.Registry) error {
+func ProbeHTTPFile(ctx context.Context, logger *slog.Logger, target string, module config.Module, registry *prometheus.Registry) error {
 	proxy := http.ProxyFromEnvironment
 	if module.HTTPFile.ProxyURL.URL != nil {
 		proxy = http.ProxyURL(module.HTTPFile.ProxyURL.URL)

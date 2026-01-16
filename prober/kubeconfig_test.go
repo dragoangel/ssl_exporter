@@ -23,7 +23,7 @@ import (
 func TestProbeKubeconfig(t *testing.T) {
 	cert, kubeconfig, err := createTestKubeconfig("", "kubeconfig")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(kubeconfig)
 

@@ -3,20 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/alecthomas/kingpin/v2"
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	versioncollector "github.com/prometheus/client_golang/prometheus/collectors/version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/common/promlog"
-	promlogflag "github.com/prometheus/common/promlog/flag"
+	"github.com/prometheus/common/promslog"
+	promslogflag "github.com/prometheus/common/promslog/flag"
 	"github.com/prometheus/common/version"
+	"github.com/prometheus/exporter-toolkit/web"
+	webflag "github.com/prometheus/exporter-toolkit/web/kingpinflag"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
 	"github.com/ribbybibby/ssl_exporter/v2/prober"
 )
@@ -25,7 +26,7 @@ const (
 	namespace = "ssl"
 )
 
-func probeHandler(logger log.Logger, w http.ResponseWriter, r *http.Request, conf *config.Config) {
+func probeHandler(logger *slog.Logger, w http.ResponseWriter, r *http.Request, conf *config.Config) {
 	moduleName := r.URL.Query().Get("module")
 	if moduleName == "" {
 		moduleName = conf.DefaultModule
@@ -100,11 +101,11 @@ func probeHandler(logger log.Logger, w http.ResponseWriter, r *http.Request, con
 	registry.MustRegister(probeSuccess, proberType)
 	proberType.WithLabelValues(module.Prober).Set(1)
 
-	logger = log.With(logger, "target", target, "prober", module.Prober, "timeout", timeout)
+	probeLogger := logger.With("target", target, "prober", module.Prober, "timeout", timeout)
 
-	err := probeFunc(ctx, logger, target, module, registry)
+	err := probeFunc(ctx, probeLogger, target, module, registry)
 	if err != nil {
-		level.Error(logger).Log("msg", err)
+		probeLogger.Error(err.Error())
 		probeSuccess.Set(0)
 	} else {
 		probeSuccess.Set(1)
@@ -121,32 +122,32 @@ func init() {
 
 func main() {
 	var (
-		listenAddress = kingpin.Flag("web.listen-address", "Address to listen on for web interface and telemetry.").Default(":9219").String()
-		metricsPath   = kingpin.Flag("web.metrics-path", "Path under which to expose metrics").Default("/metrics").String()
-		probePath     = kingpin.Flag("web.probe-path", "Path under which to expose the probe endpoint").Default("/probe").String()
-		configFile    = kingpin.Flag("config.file", "SSL exporter configuration file").Default("").String()
-		promlogConfig = promlog.Config{}
-		err           error
+		metricsPath    = kingpin.Flag("web.metrics-path", "Path under which to expose metrics").Default("/metrics").String()
+		probePath      = kingpin.Flag("web.probe-path", "Path under which to expose the probe endpoint").Default("/probe").String()
+		configFile     = kingpin.Flag("config.file", "SSL exporter configuration file").Default("").String()
+		toolkitFlags   = webflag.AddFlags(kingpin.CommandLine, ":9219")
+		promslogConfig = &promslog.Config{}
+		err            error
 	)
 
-	promlogflag.AddFlags(kingpin.CommandLine, &promlogConfig)
+	promslogflag.AddFlags(kingpin.CommandLine, promslogConfig)
 	kingpin.Version(version.Print(namespace + "_exporter"))
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 
-	logger := promlog.New(&promlogConfig)
+	logger := promslog.New(promslogConfig)
 
 	conf := config.DefaultConfig
 	if *configFile != "" {
 		conf, err = config.LoadConfig(*configFile)
 		if err != nil {
-			level.Error(logger).Log("msg", err)
+			logger.Error("Error loading config", "err", err)
 			os.Exit(1)
 		}
 	}
 
-	level.Info(logger).Log("msg", fmt.Sprintf("Starting %s_exporter %s", namespace, version.Info()))
-	level.Info(logger).Log("msg", fmt.Sprintf("Build context %s", version.BuildContext()))
+	logger.Info(fmt.Sprintf("Starting %s_exporter %s", namespace, version.Info()))
+	logger.Info(fmt.Sprintf("Build context %s", version.BuildContext()))
 
 	http.Handle(*metricsPath, promhttp.Handler())
 	http.HandleFunc(*probePath, func(w http.ResponseWriter, r *http.Request) {
@@ -163,7 +164,9 @@ func main() {
 						 </html>`))
 	})
 
-	level.Info(logger).Log("msg", fmt.Sprintf("Listening on %s", *listenAddress))
-	level.Error(logger).Log("msg", http.ListenAndServe(*listenAddress, nil))
-	os.Exit(1)
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
+		logger.Error("Error starting HTTP server", "err", err)
+		os.Exit(1)
+	}
 }

@@ -40,20 +40,33 @@ usage: ssl_exporter [<flags>]
 Flags:
   -h, --help                     Show context-sensitive help (also try --help-long and
                                  --help-man).
-      --web.listen-address=":9219"
-                                 Address to listen on for web interface and telemetry.
       --web.metrics-path="/metrics"
                                  Path under which to expose metrics
       --web.probe-path="/probe"  Path under which to expose the probe endpoint
       --config.file=""           SSL exporter configuration file
-      --log.level="info"         Only log messages with the given severity or above. Valid
-                                 levels: [debug, info, warn, error, fatal]
-      --log.format="logger:stderr"
-                                 Set the log target and format. Example:
-                                 "logger:syslog?appname=bob&local=7" or
-                                 "logger:stdout?json=true"
+      --web.listen-address=:9219 ...
+                                 Addresses on which to expose metrics and web interface.
+                                 Repeatable for multiple addresses.
+      --web.config.file=""       Path to configuration file that can enable TLS or
+                                 authentication. See:
+                                 https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md
+      --log.level=info           Only log messages with the given severity or above.
+                                 One of: [debug, info, warn, error]
+      --log.format=logfmt        Output format of log messages. One of: [logfmt, json]
       --version                  Show application version.
 ```
+
+### TLS and basic authentication
+
+The SSL Exporter supports TLS and basic authentication. This enables better
+control of the various HTTP endpoints.
+
+To use TLS and/or basic authentication, you need to pass a configuration file
+using the `--web.config.file` parameter. The format of the file is described
+[in the exporter-toolkit repository](https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md).
+
+Note that the TLS and basic authentication settings affect all HTTP endpoints:
+/metrics for scraping, /probe for probing, and the web UI.
 
 ## Metrics
 

@@ -26,7 +26,7 @@ import (
 func TestProbeHTTPS(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -63,7 +63,7 @@ func TestProbeHTTPS(t *testing.T) {
 func TestProbeHTTPSTimeout(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -96,7 +96,7 @@ func TestProbeHTTPSTimeout(t *testing.T) {
 func TestProbeHTTPSInvalidName(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -112,7 +112,7 @@ func TestProbeHTTPSInvalidName(t *testing.T) {
 
 	u, err := url.Parse(server.URL)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	registry := prometheus.NewRegistry()
@@ -130,7 +130,7 @@ func TestProbeHTTPSInvalidName(t *testing.T) {
 func TestProbeHTTPSNoScheme(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -146,7 +146,7 @@ func TestProbeHTTPSNoScheme(t *testing.T) {
 
 	u, err := url.Parse(server.URL)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	registry := prometheus.NewRegistry()
@@ -172,7 +172,7 @@ func TestProbeHTTPSNoScheme(t *testing.T) {
 func TestProbeHTTPSServerName(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -181,7 +181,7 @@ func TestProbeHTTPSServerName(t *testing.T) {
 
 	u, err := url.Parse(server.URL)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	module := config.Module{
@@ -232,7 +232,7 @@ func TestProbeHTTPSHTTP(t *testing.T) {
 func TestProbeHTTPSClientAuth(t *testing.T) {
 	server, certPEM, keyPEM, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -250,14 +250,14 @@ func TestProbeHTTPSClientAuth(t *testing.T) {
 	// Create cert file
 	certFile, err := test.WriteFile("cert.pem", certPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(certFile)
 
 	// Create key file
 	keyFile, err := test.WriteFile("key.pem", keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(keyFile)
 
@@ -293,7 +293,7 @@ func TestProbeHTTPSClientAuth(t *testing.T) {
 func TestProbeHTTPSClientAuthWrongClientCert(t *testing.T) {
 	server, serverCertPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -314,14 +314,14 @@ func TestProbeHTTPSClientAuthWrongClientCert(t *testing.T) {
 	// Create cert file
 	certFile, err := test.WriteFile("cert.pem", certPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(certFile)
 
 	// Create key file
 	keyFile, err := test.WriteFile("key.pem", keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(keyFile)
 
@@ -348,7 +348,7 @@ func TestProbeHTTPSClientAuthWrongClientCert(t *testing.T) {
 func TestProbeHTTPSExpired(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -356,7 +356,7 @@ func TestProbeHTTPSExpired(t *testing.T) {
 	certPEM, keyPEM := test.GenerateTestCertificate(time.Now().AddDate(0, 0, -1))
 	testcert, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates = []tls.Certificate{testcert}
 
@@ -385,7 +385,7 @@ func TestProbeHTTPSExpired(t *testing.T) {
 func TestProbeHTTPSExpiredInsecure(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -393,7 +393,7 @@ func TestProbeHTTPSExpiredInsecure(t *testing.T) {
 	certPEM, keyPEM := test.GenerateTestCertificate(time.Now().AddDate(0, 0, -1))
 	testcert, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates = []tls.Certificate{testcert}
 
@@ -429,13 +429,13 @@ func TestProbeHTTPSExpiredInsecure(t *testing.T) {
 func TestProbeHTTPSProxy(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
 	proxyServer, err := test.SetupHTTPProxyServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.StartTLS()
 	defer server.Close()
@@ -445,12 +445,12 @@ func TestProbeHTTPSProxy(t *testing.T) {
 
 	proxyURL, err := url.Parse(proxyServer.URL)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	badProxyURL, err := url.Parse("http://localhost:6666")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	module := config.Module{
@@ -493,7 +493,7 @@ func TestProbeHTTPSProxy(t *testing.T) {
 func TestProbeHTTPSOCSP(t *testing.T) {
 	server, certPEM, keyPEM, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -508,7 +508,7 @@ func TestProbeHTTPSOCSP(t *testing.T) {
 
 	resp, err := ocsp.CreateResponse(cert, cert, ocsp.Response{SerialNumber: big.NewInt(64), Status: 1}, key)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates[0].OCSPStaple = resp
 
@@ -540,7 +540,7 @@ func TestProbeHTTPSOCSP(t *testing.T) {
 func TestProbeHTTPSVerifiedChains(t *testing.T) {
 	rootPrivateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	rootCertExpiry := time.Now().AddDate(0, 0, 5)
@@ -589,7 +589,7 @@ func TestProbeHTTPSVerifiedChains(t *testing.T) {
 		serverKey,
 	)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 

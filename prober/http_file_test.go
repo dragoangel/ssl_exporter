@@ -77,7 +77,7 @@ func TestProbeHTTPFile_NotFound(t *testing.T) {
 func TestProbeHTTPFileHTTPS(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupHTTPSServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 

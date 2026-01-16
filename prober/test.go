@@ -1,11 +1,10 @@
 package prober
 
 import (
+	"log/slog"
 	"os"
-
-	"github.com/go-kit/log"
 )
 
-func newTestLogger() log.Logger {
-	return log.NewLogfmtLogger(log.NewSyncWriter(os.Stdout))
+func newTestLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, nil))
 }

@@ -7,17 +7,16 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"regexp"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
 )
 
 // ProbeTCP performs a tcp probe
-func ProbeTCP(ctx context.Context, logger log.Logger, target string, module config.Module, registry *prometheus.Registry) error {
+func ProbeTCP(ctx context.Context, logger *slog.Logger, target string, module config.Module, registry *prometheus.Registry) error {
 	tlsConfig, err := newTLSConfig(target, registry, &module.TLSConfig)
 	if err != nil {
 		return err
@@ -134,7 +133,7 @@ var (
 )
 
 // startTLS will send the STARTTLS command for the given protocol
-func startTLS(logger log.Logger, conn net.Conn, proto string) error {
+func startTLS(logger *slog.Logger, conn net.Conn, proto string) error {
 	var err error
 
 	qr, ok := startTLSqueryResponses[proto]
@@ -147,13 +146,13 @@ func startTLS(logger log.Logger, conn net.Conn, proto string) error {
 		if qr.expect != "" {
 			var match bool
 			for scanner.Scan() {
-				level.Debug(logger).Log("msg", fmt.Sprintf("read line: %s", scanner.Text()))
+				logger.Debug(fmt.Sprintf("read line: %s", scanner.Text()))
 				match, err = regexp.Match(qr.expect, scanner.Bytes())
 				if err != nil {
 					return err
 				}
 				if match {
-					level.Debug(logger).Log("msg", fmt.Sprintf("regex: %s matched: %s", qr.expect, scanner.Text()))
+					logger.Debug(fmt.Sprintf("regex: %s matched: %s", qr.expect, scanner.Text()))
 					break
 				}
 			}
@@ -170,21 +169,21 @@ func startTLS(logger log.Logger, conn net.Conn, proto string) error {
 			if err != nil {
 				return nil
 			}
-			level.Debug(logger).Log("msg", fmt.Sprintf("read bytes: %x", buffer))
+			logger.Debug(fmt.Sprintf("read bytes: %x", buffer))
 			if bytes.Compare(buffer, qr.expectBytes) != 0 {
 				return fmt.Errorf("read bytes %x didn't match with expected bytes %x", buffer, qr.expectBytes)
 			} else {
-				level.Debug(logger).Log("msg", fmt.Sprintf("expected bytes %x matched with read bytes %x", qr.expectBytes, buffer))
+				logger.Debug(fmt.Sprintf("expected bytes %x matched with read bytes %x", qr.expectBytes, buffer))
 			}
 		}
 		if qr.send != "" {
-			level.Debug(logger).Log("msg", fmt.Sprintf("sending line: %s", qr.send))
+			logger.Debug(fmt.Sprintf("sending line: %s", qr.send))
 			if _, err := fmt.Fprintf(conn, "%s\r\n", qr.send); err != nil {
 				return err
 			}
 		}
 		if len(qr.sendBytes) > 0 {
-			level.Debug(logger).Log("msg", fmt.Sprintf("sending bytes: %x", qr.sendBytes))
+			logger.Debug(fmt.Sprintf("sending bytes: %x", qr.sendBytes))
 			if _, err = conn.Write(qr.sendBytes); err != nil {
 				return err
 			}

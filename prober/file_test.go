@@ -21,7 +21,7 @@ import (
 func TestProbeFile(t *testing.T) {
 	cert, certFile, err := createTestFile("", "tls*.crt")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(certFile)
 
@@ -43,7 +43,7 @@ func TestProbeFile(t *testing.T) {
 func TestProbeFileGlob(t *testing.T) {
 	cert, certFile, err := createTestFile("", "tls*.crt")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(certFile)
 
@@ -67,11 +67,11 @@ func TestProbeFileGlob(t *testing.T) {
 func TestProbeFileGlobDoubleStar(t *testing.T) {
 	tmpDir, err := ioutil.TempDir("", "testdir")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	cert, certFile, err := createTestFile(tmpDir, "tls*.crt")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.Remove(certFile)
 
@@ -95,26 +95,26 @@ func TestProbeFileGlobDoubleStar(t *testing.T) {
 func TestProbeFileGlobDoubleStarMultiple(t *testing.T) {
 	tmpDir, err := ioutil.TempDir("", "testdir")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmpDir)
 
 	tmpDir1, err := ioutil.TempDir(tmpDir, "testdir")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	cert1, certFile1, err := createTestFile(tmpDir1, "1*.crt")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	tmpDir2, err := ioutil.TempDir(tmpDir, "testdir")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	cert2, certFile2, err := createTestFile(tmpDir2, "2*.crt")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	module := config.Module{}

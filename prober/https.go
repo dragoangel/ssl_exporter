@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/version"
 	"github.com/ribbybibby/ssl_exporter/v2/config"
@@ -19,7 +17,7 @@ import (
 var userAgent = fmt.Sprintf("SSLExporter/%s", version.Version)
 
 // ProbeHTTPS performs a https probe
-func ProbeHTTPS(ctx context.Context, logger log.Logger, target string, module config.Module, registry *prometheus.Registry) error {
+func ProbeHTTPS(ctx context.Context, logger *slog.Logger, target string, module config.Module, registry *prometheus.Registry) error {
 	tlsConfig, err := newTLSConfig("", registry, &module.TLSConfig)
 	if err != nil {
 		return err
@@ -66,9 +64,9 @@ func ProbeHTTPS(ctx context.Context, logger log.Logger, target string, module co
 		return err
 	}
 	defer func() {
-		_, err := io.Copy(ioutil.Discard, resp.Body)
+		_, err := io.Copy(io.Discard, resp.Body)
 		if err != nil {
-			level.Error(logger).Log("msg", err)
+			logger.Error(err.Error())
 		}
 		resp.Body.Close()
 	}()

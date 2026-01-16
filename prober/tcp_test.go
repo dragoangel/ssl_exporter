@@ -60,7 +60,7 @@ func TestProbeTCP(t *testing.T) {
 func TestProbeTCPInvalidName(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -91,7 +91,7 @@ func TestProbeTCPInvalidName(t *testing.T) {
 func TestProbeTCPServerName(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -130,7 +130,7 @@ func TestProbeTCPServerName(t *testing.T) {
 func TestProbeTCPExpired(t *testing.T) {
 	server, _, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -138,7 +138,7 @@ func TestProbeTCPExpired(t *testing.T) {
 	certPEM, keyPEM := test.GenerateTestCertificate(time.Now().AddDate(0, 0, -1))
 	testcert, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates = []tls.Certificate{testcert}
 
@@ -167,7 +167,7 @@ func TestProbeTCPExpired(t *testing.T) {
 func TestProbeTCPExpiredInsecure(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -175,7 +175,7 @@ func TestProbeTCPExpiredInsecure(t *testing.T) {
 	certPEM, keyPEM := test.GenerateTestCertificate(time.Now().AddDate(0, 0, -1))
 	testcert, err := tls.X509KeyPair(certPEM, keyPEM)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates = []tls.Certificate{testcert}
 
@@ -211,7 +211,7 @@ func TestProbeTCPExpiredInsecure(t *testing.T) {
 func TestProbeTCPStartTLSSMTP(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -251,7 +251,7 @@ func TestProbeTCPStartTLSSMTP(t *testing.T) {
 func TestProbeTCPStartTLSSMTPWithDashInResponse(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -290,7 +290,7 @@ func TestProbeTCPStartTLSSMTPWithDashInResponse(t *testing.T) {
 func TestProbeTCPStartTLSFTP(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -329,7 +329,7 @@ func TestProbeTCPStartTLSFTP(t *testing.T) {
 func TestProbeTCPStartTLSIMAP(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -368,7 +368,7 @@ func TestProbeTCPStartTLSIMAP(t *testing.T) {
 func TestProbeTCPStartTLSPOP3(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -407,7 +407,7 @@ func TestProbeTCPStartTLSPOP3(t *testing.T) {
 func TestProbeTCPStartTLSPostgreSQL(t *testing.T) {
 	server, certPEM, _, caFile, teardown, err := test.SetupTCPServer()
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
@@ -490,7 +490,7 @@ func TestProbeTCPOCSP(t *testing.T) {
 
 	resp, err := ocsp.CreateResponse(cert, cert, ocsp.Response{SerialNumber: big.NewInt(64), Status: 1}, key)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	server.TLS.Certificates[0].OCSPStaple = resp
 
@@ -523,7 +523,7 @@ func TestProbeTCPOCSP(t *testing.T) {
 func TestProbeTCPVerifiedChains(t *testing.T) {
 	rootPrivateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	rootCertExpiry := time.Now().AddDate(0, 0, 5)
@@ -572,7 +572,7 @@ func TestProbeTCPVerifiedChains(t *testing.T) {
 		serverKey,
 	)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	defer teardown()
 
