@@ -49,6 +49,11 @@ func TestProbeHandler(t *testing.T) {
 	if ok := strings.Contains(rr.Body.String(), "ssl_prober{prober=\"https\"} 1"); !ok {
 		t.Errorf("expected `ssl_prober{prober=\"https\"} 1`")
 	}
+
+	// Check probe duration metric
+	if ok := strings.Contains(rr.Body.String(), "ssl_probe_duration_seconds"); !ok {
+		t.Errorf("expected `ssl_probe_duration_seconds`")
+	}
 }
 
 // TestProbeHandlerFail tests that the probe handler sets the ssl_probe_success and
@@ -67,6 +72,11 @@ func TestProbeHandlerFail(t *testing.T) {
 	// Check prober metric
 	if ok := strings.Contains(rr.Body.String(), "ssl_prober{prober=\"tcp\"} 1"); !ok {
 		t.Errorf("expected `ssl_prober{prober=\"tcp\"} 1`")
+	}
+
+	// Check probe duration metric (should be present even on failure)
+	if ok := strings.Contains(rr.Body.String(), "ssl_probe_duration_seconds"); !ok {
+		t.Errorf("expected `ssl_probe_duration_seconds`")
 	}
 }
 

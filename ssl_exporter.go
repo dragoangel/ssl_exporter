@@ -88,6 +88,12 @@ func probeHandler(logger *slog.Logger, w http.ResponseWriter, r *http.Request, c
 				Help: "If the probe was a success",
 			},
 		)
+		probeDuration = prometheus.NewGauge(
+			prometheus.GaugeOpts{
+				Name: prometheus.BuildFQName(namespace, "", "probe_duration_seconds"),
+				Help: "Returns how long the probe took to complete in seconds",
+			},
+		)
 		proberType = prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: prometheus.BuildFQName(namespace, "", "prober"),
@@ -98,12 +104,14 @@ func probeHandler(logger *slog.Logger, w http.ResponseWriter, r *http.Request, c
 	)
 
 	registry := prometheus.NewRegistry()
-	registry.MustRegister(probeSuccess, proberType)
+	registry.MustRegister(probeSuccess, probeDuration, proberType)
 	proberType.WithLabelValues(module.Prober).Set(1)
 
 	probeLogger := logger.With("target", target, "prober", module.Prober, "timeout", timeout)
 
+	start := time.Now()
 	err := probeFunc(ctx, probeLogger, target, module, registry)
+	probeDuration.Set(time.Since(start).Seconds())
 	if err != nil {
 		probeLogger.Error(err.Error())
 		probeSuccess.Set(0)
